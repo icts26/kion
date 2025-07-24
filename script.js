@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const csvFilePath = 'data.csv'; // CSVファイルの名前
+    const csvFilePath = 'data2.csv'; // CSVファイルの名前
 
     fetch(csvFilePath)
         .then(response => {
