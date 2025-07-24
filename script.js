@@ -9,16 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.text();
         })
         .then(csvText => {
-            // CSVテキストを解析する
             const data = parseCSV(csvText);
-            console.log('Parsed CSV Data:', data); // デバッグ用
+            console.log('Parsed Temperature Data:', data); // デバッグ用
 
-            // グラフ描画
-            renderChart(data);
+            renderTemperatureChart(data);
         })
         .catch(error => {
             console.error('CSVファイルの読み込みまたは解析中にエラーが発生しました:', error);
-            alert('CSVファイルの読み込みに失敗しました。コンソールを確認してください。'+ csvFilePath);
+            alert('CSVファイルの読み込みに失敗しました。コンソールを確認してください。');
         });
 
     /**
@@ -34,56 +32,72 @@ document.addEventListener('DOMContentLoaded', () => {
             const values = line.split(',');
             const row = {};
             headers.forEach((header, index) => {
-                // 数値に変換できる場合は変換する
-                row[header.trim()] = isNaN(Number(values[index])) ? values[index].trim() : Number(values[index]);
+                // 日付は文字列として保持し、気温は数値に変換
+                if (header.trim() === 'Date') {
+                    row[header.trim()] = values[index].trim();
+                } else {
+                    row[header.trim()] = isNaN(Number(values[index])) ? values[index].trim() : Number(values[index]);
+                }
             });
             return row;
         });
     }
 
     /**
-     * Chart.jsを使ってグラフを描画する関数
+     * Chart.jsを使って気温グラフを描画する関数
      * @param {Array<Object>} data - パースされたCSVデータ
      */
-    function renderChart(data) {
-        const labels = data.map(row => row.Month); // 月 (X軸)
-        const sales = data.map(row => row.Sales);   // 売上 (Y軸)
+    function renderTemperatureChart(data) {
+        // Chart.jsのデータ形式に変換
+        // x軸が日付、y軸が気温となるようにオブジェクトの配列を作る
+        const chartData = data.map(row => ({
+            x: row.Date, // 日付
+            y: row.AvgTemperature // 平均気温
+        }));
 
-        const ctx = document.getElementById('myChart').getContext('2d');
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
         new Chart(ctx, {
-            type: 'bar', // 棒グラフ
+            type: 'line', // 折れ線グラフ
             data: {
-                labels: labels,
                 datasets: [{
-                    label: '月別売上',
-                    data: sales,
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // 棒の色
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    label: '平均気温 (°C)',
+                    data: chartData,
+                    borderColor: 'rgba(255, 99, 132, 1)', // 線の色
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)', // 塗りつぶしの色
+                    fill: false, // グラフの下を塗りつぶさない
+                    tension: 0.1 // 線の滑らかさ
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false, // コンテナに合わせてサイズ調整
+                maintainAspectRatio: false,
                 scales: {
-                    y: {
-                        beginAtZero: true,
+                    x: {
+                        type: 'time', // X軸のタイプを'time'に設定
+                        time: {
+                            unit: 'day', // 単位を日とする
+                            tooltipFormat: 'YYYY/MM/DD', // ツールチップの日付表示形式
+                            displayFormats: {
+                                day: 'MMM D' // 軸ラベルの日付表示形式 (例: Jan 1)
+                            }
+                        },
                         title: {
                             display: true,
-                            text: '売上'
+                            text: '日付'
                         }
                     },
-                    x: {
+                    y: {
+                        beginAtZero: false, // 0から始める必要がなければfalse
                         title: {
                             display: true,
-                            text: '月'
+                            text: '平均気温 (°C)'
                         }
                     }
                 },
                 plugins: {
                     title: {
                         display: true,
-                        text: '月別売上データ'
+                        text: '過去の平均気温推移'
                     }
                 }
             }

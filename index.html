@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSVデータをグラフ表示</title>
+    <title>過去の気温データグラフ</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,8 +16,8 @@
             background-color: #f4f4f4;
         }
         .chart-container {
-            width: 80%; /* グラフの幅を調整 */
-            max-width: 800px; /* 最大幅を設定 */
+            width: 90%; /* グラフの幅を調整 */
+            max-width: 900px; /* 最大幅を設定 */
             background-color: white;
             padding: 20px;
             border-radius: 8px;
@@ -25,11 +25,13 @@
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-dayjs-4/dist/chartjs-adapter-dayjs-4.min.js"></script>
 </head>
 <body>
-    <h1>CSVデータから気温の変化グラフ</h1>
+    <h1>過去の平均気温データ</h1>
     <div class="chart-container">
-        <canvas id="myChart"></canvas>
+        <canvas id="temperatureChart"></canvas>
     </div>
 
     <script src="script.js"></script>
