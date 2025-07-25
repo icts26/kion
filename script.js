@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const csvFilePath = 'data2.csv'; // CSVファイルの名前
+    const csvFilePath = 'data2.csv'; // 気温CSVファイルの名前
 
     fetch(csvFilePath)
         .then(response => {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(csvText => {
             const data = parseCSV(csvText);
-            console.log('Parsed Temperature Data:', data); // デバッグ用
+            console.log('Parsed Temperature Data (from parseCSV):', data); // デバッグ用
 
             renderTemperatureChart(data);
         })
@@ -25,18 +25,30 @@ document.addEventListener('DOMContentLoaded', () => {
      * @returns {Array<Object>} - パースされたデータの配列
      */
     function parseCSV(csvText) {
-        const lines = csvText.trim().split('\n'); // 各行に分割
-        const headers = lines[0].split(','); // ヘッダー行を分割
+        const lines = csvText.trim().split('\n');
+        // ヘッダーもトリム
+        const headers = lines[0].split(',').map(header => header.trim());
 
         return lines.slice(1).map(line => {
             const values = line.split(',');
             const row = {};
             headers.forEach((header, index) => {
-                // 日付は文字列として保持し、気温は数値に変換
-                if (header.trim() === 'Date') {
-                    row[header.trim()] = values[index].trim();
+                // 値の前後の空白を徹底的にトリム
+                // また、values[index] が undefined の場合も考慮して空文字列で初期化
+                const valueString = (values[index] || '').trim(); 
+
+                if (header === 'Date') {
+                    // 日付は文字列として保持
+                    row[header] = valueString;
+                } else if (header === 'AvgTemperature') { // ★ここをAvgTemperatureの列名に合わせて修正★
+                    // 平均気温は数値に変換
+                    // parseFloatを使って、文字列の先頭から数値部分を抽出
+                    const numValue = parseFloat(valueString);
+                    // NaN（数値でない）の場合は、0 または適切なデフォルト値に設定するか、エラー処理
+                    row[header] = isNaN(numValue) ? undefined : numValue; // undefined または 0 にする
                 } else {
-                    row[header.trim()] = isNaN(Number(values[index])) ? values[index].trim() : Number(values[index]);
+                    // その他の列は現状維持（必要に応じて同様に数値変換など）
+                    row[header] = valueString;
                 }
             });
             return row;
@@ -49,70 +61,74 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function renderTemperatureChart(data) {
         const chartData = data.map(row => {
-        // Day.jsを使って日付文字列を明示的に解析
-        // 'YYYY-MM-DD' はCSVファイルの日付形式に合わせてください
-        const parsedDate = dayjs(row.x, 'YYYY-MM-DD'); 
+            // Day.jsを使って日付文字列を明示的に解析
+            const parsedDate = dayjs(row.Date, 'YYYY-MM-DD'); 
 
-        // 解析が成功したかを確認（デバッグ用）
-        if (!parsedDate.isValid()) {
-            console.error('無効な日付データが見つかりました:', row.x);
-            // 無効なデータはスキップするか、適切なデフォルト値を設定
-            return null; // この行はグラフに含めない
-        }
-        return {
-            x: parsedDate.valueOf(), // Day.jsオブジェクトからミリ秒単位のタイムスタンプを取得
-            y: row.y
-        };
-    }).filter(item => item !== null); // 無効な日付があった行をフィルタリングして除外
+            if (!parsedDate.isValid()) {
+                console.error('無効な日付データが見つかりました:', row.Date);
+                return null;
+            }
 
-    console.log('Chart Data to be rendered (after explicit parsing):', chartData); // 最終確認用
+            // ★ここも重要: y軸の値がAvgTemperatureとして正しく取得されているか確認
+            if (row.AvgTemperature === undefined) {
+                 console.error('AvgTemperature のデータが undefined です。CSVヘッダー名を確認してください。');
+                 return null; // データが取れていない場合はこの行をスキップ
+            }
 
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                label: '平均気温 (°C)',
-                data: chartData,
-                borderColor: 'rgba(255, 99, 132, 1)',
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                fill: false,
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        tooltipFormat: 'YYYY/MM/DD',
-                        displayFormats: {
-                            day: 'MMM D'
+            return {
+                x: parsedDate.valueOf(),
+                y: row.AvgTemperature // ここは AvgTemperature のまま
+            };
+        }).filter(item => item !== null);
+
+        console.log('Chart Data to be rendered (after explicit parsing):', chartData); // 最終確認用
+
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: '平均気温 (°C)',
+                    data: chartData,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            tooltipFormat: 'YYYY/MM/DD',
+                            displayFormats: {
+                                day: 'MMM D'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '日付'
                         }
                     },
-                    title: {
-                        display: true,
-                        text: '日付'
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: '平均気温 (°C)'
+                        }
                     }
                 },
-                y: {
-                    beginAtZero: false,
+                plugins: {
                     title: {
                         display: true,
-                        text: '平均気温 (°C)'
+                        text: '過去の平均気温推移'
                     }
                 }
-            },
-            plugins: {
-                title: {
-                    display: true,
-                    text: '過去の平均気温推移'
-                }
             }
-        }
-    });
-}
+        });
+    }
 });
