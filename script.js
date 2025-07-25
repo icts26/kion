@@ -78,6 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     x: {
                         type: 'time', // X軸のタイプを'time'に設定
                         time: {
+                            // ★ここを修正/追加★ - CSVの日付形式に合わせて 'YYYY-MM-DD' を指定
+                            parser: 'YYYY-MM-DD', // CSVファイルの日付形式がこれであることを前提
                             unit: 'day', // 単位を日とする
                             tooltipFormat: 'YYYY/MM/DD', // ツールチップの日付表示形式
                             displayFormats: {
