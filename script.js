@@ -54,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
             x: row.Date, // 日付
             y: row.AvgTemperature // 平均気温
         }));
+        console.log('Chart Data to be rendered:', chartData); // ★この行を追加★
 
         const ctx = document.getElementById('temperatureChart').getContext('2d');
         new Chart(ctx, {
