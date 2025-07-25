@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             return {
-                x: parsedDate.valueOf(),
+                x: row.Date // parsedDate.valueOf(),
                 y: row.AvgTemperature // ここは AvgTemperature のまま
             };
         }).filter(item => item !== null);
