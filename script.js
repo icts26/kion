@@ -48,64 +48,71 @@ document.addEventListener('DOMContentLoaded', () => {
      * @param {Array<Object>} data - パースされたCSVデータ
      */
     function renderTemperatureChart(data) {
-        // Chart.jsのデータ形式に変換
-        // x軸が日付、y軸が気温となるようにオブジェクトの配列を作る
-        console.log('Parsed Temperature Data:', data); //　引数の確認
-        
-        const chartData = data.map(row => ({
-            x: row.Date, // 日付
-            y: row.AvgTemperature // 平均気温
-        }));
-        console.log('Chart Data to be rendered:', chartData); // ★この行を追加★
+        const chartData = data.map(row => {
+        // Day.jsを使って日付文字列を明示的に解析
+        // 'YYYY-MM-DD' はCSVファイルの日付形式に合わせてください
+        const parsedDate = dayjs(row.x, 'YYYY-MM-DD'); 
 
-        const ctx = document.getElementById('temperatureChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line', // 折れ線グラフ
-            data: {
-                datasets: [{
-                    label: '平均気温 (°C)',
-                    data: chartData,
-                    borderColor: 'rgba(255, 99, 132, 1)', // 線の色
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)', // 塗りつぶしの色
-                    fill: false, // グラフの下を塗りつぶさない
-                    tension: 0.1 // 線の滑らかさ
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        type: 'time', // X軸のタイプを'time'に設定
-                        time: {
-                            // ★ここを修正/追加★ - CSVの日付形式に合わせて 'YYYY-MM-DD' を指定
-                            parser: 'YYYY-MM-DD', // CSVファイルの日付形式がこれであることを前提
-                            unit: 'day', // 単位を日とする
-                            tooltipFormat: 'YYYY/MM/DD', // ツールチップの日付表示形式
-                            displayFormats: {
-                                day: 'MMM D' // 軸ラベルの日付表示形式 (例: Jan 1)
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: '日付'
+        // 解析が成功したかを確認（デバッグ用）
+        if (!parsedDate.isValid()) {
+            console.error('無効な日付データが見つかりました:', row.x);
+            // 無効なデータはスキップするか、適切なデフォルト値を設定
+            return null; // この行はグラフに含めない
+        }
+        return {
+            x: parsedDate.valueOf(), // Day.jsオブジェクトからミリ秒単位のタイムスタンプを取得
+            y: row.y
+        };
+    }).filter(item => item !== null); // 無効な日付があった行をフィルタリングして除外
+
+    console.log('Chart Data to be rendered (after explicit parsing):', chartData); // 最終確認用
+
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: '平均気温 (°C)',
+                data: chartData,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'day',
+                        tooltipFormat: 'YYYY/MM/DD',
+                        displayFormats: {
+                            day: 'MMM D'
                         }
                     },
-                    y: {
-                        beginAtZero: false, // 0から始める必要がなければfalse
-                        title: {
-                            display: true,
-                            text: '平均気温 (°C)'
-                        }
-                    }
-                },
-                plugins: {
                     title: {
                         display: true,
-                        text: '過去の平均気温推移'
+                        text: '日付'
+                    }
+                },
+                y: {
+                    beginAtZero: false,
+                    title: {
+                        display: true,
+                        text: '平均気温 (°C)'
                     }
                 }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: '過去の平均気温推移'
+                }
             }
-        });
-    }
+        }
+    });
+}
 });
