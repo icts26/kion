@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderTemperatureChart(data) {
         // Chart.jsのデータ形式に変換
         // x軸が日付、y軸が気温となるようにオブジェクトの配列を作る
+        console.log('Parsed Temperature Data:', data); //　引数の確認
+        
         const chartData = data.map(row => ({
             x: row.Date, // 日付
             y: row.AvgTemperature // 平均気温
