@@ -1,6 +1,28 @@
-Chart.register(window['chartjs-adapter-dayjs']);
-
 document.addEventListener('DOMContentLoaded', () => {
+
+
+  // Chart.js に dayjs アダプターを明示的に設定
+  Chart.defaults.adapters.date = {
+    formats: dayjs.Ls.en.formats,
+        parse: function (value) {
+            return dayjs(value);
+        },
+        format: function (time, format) {
+            return dayjs(time).format(format);
+        },
+        add: function (time, amount, unit) {
+            return dayjs(time).add(amount, unit);
+        },
+        diff: function (max, min, unit) {
+            return dayjs(max).diff(dayjs(min), unit);
+        },
+        startOf: function (time, unit, weekday) {
+            return dayjs(time).startOf(unit);
+        },
+        endOf: function (time, unit) {
+            return dayjs(time).endOf(unit);
+        }
+    };
     const csvFilePath = 'data2.csv'; // 気温CSVファイルの名前
 
     fetch(csvFilePath)
