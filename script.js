@@ -1,6 +1,4 @@
-
-import { Chart } from 'chart.js';
-import 'chartjs-adapter-dayjs';
+Chart.register(window['chartjs-adapter-dayjs']);
 
 document.addEventListener('DOMContentLoaded', () => {
     const csvFilePath = 'data2.csv'; // 気温CSVファイルの名前
