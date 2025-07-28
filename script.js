@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // Chart.js に dayjs アダプターを明示的に設定
-  Chart.defaults.adapters.date = {
+  /* Chart.defaults.adapters.date = {
     formats: dayjs.Ls.en.formats,
         parse: function (value) {
             return dayjs(value);
@@ -23,6 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return dayjs(time).endOf(unit);
         }
     };
+    */
+   
     const csvFilePath = 'data2.csv'; // 気温CSVファイルの名前
 
     fetch(csvFilePath)
