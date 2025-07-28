@@ -104,9 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         type: 'time',
                         time: {
                             unit: 'day',
-                            tooltipFormat: 'YYYY/MM/DD',
+                            tooltipFormat: 'YYYY-MM-DD',
                             displayFormats: {
-                                day: 'MMM D'
+                                day: 'MM DD'
                             }
                         },
                         title: {
