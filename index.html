@@ -22,24 +22,14 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            /* Google Charts は高さも指定しないと表示されないことが多い */
+            height: 500px; /* グラフの高さを指定 */
         }
     </style>
-
-<!-- ライブラリの読み込み -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/dayjs@1.11.10">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-dayjs@1.0.0/dist/chartjs-adapter-dayjs.min.js">
-    </script>
-
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
     <h1>過去の平均気温データ</h1>
-    <div class="chart-container">
-        <canvas id="temperatureChart"></canvas>
-    </div>
-
-    <script src="script.js"></script>
+    <div id="curve_chart" class="chart-container"></div> <script src="script.js"></script>
 </body>
 </html>
