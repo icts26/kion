@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const csvFilePath = 'data2.csv'; // 気温CSVファイルの名前
+    const csvFilePath = 'data3.csv'; // 気温CSVファイルの名前
 
     // Google Charts をロードする
     google.charts.load('current', {'packages':['corechart']});
