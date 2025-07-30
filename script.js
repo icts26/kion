@@ -71,8 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
         data.forEach(row => {
             // 日付文字列を Date オブジェクトに変換
             // 'YYYY-MM-DD' はCSVファイルの日付形式に合わせてください
-            const dateObj = dayjs(row.date, 'YYYY-MM-DD').toDate(); // ★ここを修正★
-            // const dateObj = new Date(row.Date); 
+            // const dateObj = dayjs(row.date, 'YYYY-MM-DD').toDate(); // ★ここを修正★
+            const dateObj = new Date(row.Date); 
             // ★追加: 日付オブジェクトが有効か確認するログ★
             if (isNaN(dateObj.getTime())) { // 無効なDateオブジェクトの場合
                 console.error('無効な日付オブジェクトが生成されました:', row.date);
