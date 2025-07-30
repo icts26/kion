@@ -50,20 +50,20 @@ document.addEventListener('DOMContentLoaded', () => {
     dataTable.addColumn('number', '平均気温');
 
     dataArray.forEach(row => {
-      if (!row.Date || !row.AvgTemperature) {
+      if (!row.date || !row.AvgTemperature) {
         console.warn('不完全なデータ行をスキップ:', row);
         return;
       }
 
-      const dateParts = row.Date.split('-');
+      const dateParts = row.date.split('-');
       if (dateParts.length !== 3) {
-        console.error('日付形式が不正です:', row.Date);
+        console.error('日付形式が不正です:', row.date);
         return;
       }
 
       const dateObj = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
       if (isNaN(dateObj.getTime())) {
-        console.error('無効な日付オブジェクトが生成されました:', row.Date);
+        console.error('無効な日付オブジェクトが生成されました:', row.date);
         return;
       }
 
