@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
   const csvFilePath = 'data2.csv';
+  // Google Charts のロード
+  google.charts.load('current', { packages: ['corechart'] });
+  google.charts.setOnLoadCallback(() => {
+    fetchAndDrawChart();
+  });
 
   fetch(csvFilePath)
     .then(response => {
