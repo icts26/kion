@@ -57,6 +57,19 @@ function parseCSV(csvText) {
   });
 }
 
+<<<<<<< HEAD
+                if (header === 'date') {
+                    row[header] = valueString;
+                } else if (header === 'AvgTemperature') {
+                    const numValue = parseFloat(valueString);
+                    row[header] = isNaN(numValue) ? undefined : numValue;
+                } else {
+                    row[header] = valueString;
+                }
+            });
+            return row;
+        });
+=======
 /**
  * Google Charts を使ってグラフを描画する関数
  * @param {Array<Object>} allData - パースされた全CSVデータ
@@ -80,6 +93,7 @@ function drawGoogleChart(allData) {
     for (let year = minYear; year <= maxYear; year++) {
         years.push(year);
         dataTable.addColumn('number', `${year}年 平均気温`); // 年ごとの列を追加
+>>>>>>> 2104f6beb2006710a848c50cfdb74ed0dd9cb7a5
     }
 
     // データを行に整形
