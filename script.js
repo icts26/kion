@@ -94,7 +94,6 @@ function drawGoogleChart(allData) {
     for (let year = minYear; year <= maxYear; year++) {
         years.push(year);
         dataTable.addColumn('number', `${year}年 平均気温`); // 年ごとの列を追加
->>>>>>> 2104f6beb2006710a848c50cfdb74ed0dd9cb7a5
     }
 
     // データを行に整形
