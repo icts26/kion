@@ -56,7 +56,7 @@ function parseCSV(csvText) {
     return row;
   });
 }
-
+/**
 <<<<<<< HEAD
                 if (header === 'date') {
                     row[header] = valueString;
@@ -70,6 +70,7 @@ function parseCSV(csvText) {
             return row;
         });
 =======
+/*
 /**
  * Google Charts を使ってグラフを描画する関数
  * @param {Array<Object>} allData - パースされた全CSVデータ
